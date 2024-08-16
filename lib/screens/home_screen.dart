@@ -8,7 +8,7 @@ import '../widgets/my_drawer.dart';
 import '../widgets/my_textfields.dart';
 import 'details_athkar_screen.dart';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
 
   File? _selectedFile;
   bool _isFilePickerOpen = false;
+  TimeOfDay? selectedTime; // متغير لتخزين الوقت المحدد
 
   @override
   void initState() {
@@ -50,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff3949AB),
-      endDrawer: myDrawer(context),
+      drawer: myDrawer(context),
       appBar: AppBar(
         title: const Text('repeat sound ©سبحة أذكار صوتيه'),
         centerTitle: true,
@@ -62,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
             colorText: Colors.white,
             color: Colors.white,
             colorBorder: Colors.white,
-            text: 'البحث',
+            text: AppLocalizations.of(context)!.search,
             keyType: TextInputType.text,
             controller: _searchController,
             onChangedT: onSearch,
@@ -88,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                         ),
                       );
                     },
-                    trailing: Text(
+                    leading: Text(
                       '${index + 1}',
                       style: const TextStyle(
                           color: Colors.black,
@@ -103,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                           fontWeight: FontWeight.bold,
                           fontSize: 20),
                     ),
-                    leading: IconButton(
+                    trailing: IconButton(
                       icon: const Icon(
                         Icons.menu,
                         color: Colors.orange,
@@ -112,6 +113,10 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                         _updateListAthkar(index, context);
                       },
                     ),
+                    // subtitle: Text(
+                    //   'Time is : $selectedTime',
+                    //   textAlign: TextAlign.center,
+                    // ),
                   ),
                 );
               },
@@ -119,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
           )
         ]),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _addListAthkar(context);
@@ -180,10 +186,11 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
   Future<void> _addListAthkar(BuildContext context) async {
     await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           content: SizedBox(
-            height: 350,
+            height: 400, // زيادة الحجم للسماح بعرض الحقول الجديدة
             width: 300,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -196,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                 ),
                 MyTextField(
                   colorText: Colors.black,
-                  text: 'عنوان الصوت',
+                  text: AppLocalizations.of(context)!.title_textfiled,
                   icons: Icons.title,
                   color: Colors.black,
                   colorIcons: const Color(0xff3949AB),
@@ -207,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                 MyTextField(
                   colorText: Colors.black,
                   icons: Icons.music_video,
-                  text: 'الملف الصوتي',
+                  text: AppLocalizations.of(context)!.file_textfiled,
                   color: Colors.black,
                   colorIcons: const Color(0xff3949AB),
                   colorBorder: const Color(0xff3949AB),
@@ -267,34 +274,14 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () async {
-                          Navigator.of(context).pop();
-                          _titleAthkarController.clear();
-                          _fileAthkarController.clear();
-                          await _stopRecording();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
-                        ),
-                        child: const Text(
-                          'رجوع',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: ElevatedButton(
                         onPressed: () {
                           if (_fileAthkarController.text.isNotEmpty &&
                               _titleAthkarController.text.isNotEmpty) {
+                            // التأكد من اختيار الوقت
                             DataList newItem = DataList(
                               name: _titleAthkarController.text,
                               audioUrl: _fileAthkarController.text,
+                              // alarmTime: selectedTime!, // حفظ الوقت المحدد
                             );
                             addItem(newItem);
                             _titleAthkarController.clear();
@@ -305,22 +292,45 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                                 context: context,
                                 error: true,
                                 message:
-                                    'تأكد من إضافة عنوان الصوت أوالملف الصوتي');
+                                'تأكد من إضافة عنوان الصوت أوالملف الصوتي واختيار وقت التنبيه');
                             return;
                           }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff3949AB),
                         ),
-                        child: const Text(
-                          'إضافة',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.add,
+                          style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 15),
                         ),
                       ),
                     ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+                          _titleAthkarController.clear();
+                          _fileAthkarController.clear();
+                          await _stopRecording();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orange,
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.arrow,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+
                   ],
                 ),
               ],
@@ -339,6 +349,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
 
     await showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           content: SizedBox(
@@ -384,7 +395,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                           iconSize: 30,
                           style: IconButton.styleFrom(
                             backgroundColor:
-                            _isRecording ? Colors.red : Colors.orange,
+                                _isRecording ? Colors.red : Colors.orange,
                             minimumSize: const Size(50, 50),
                           ),
                           onPressed: () async {
@@ -435,9 +446,9 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                         ),
-                        child: const Text(
-                          'حذف',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.delete,
+                          style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 15),
@@ -458,9 +469,9 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xff3949AB),
                         ),
-                        child: const Text(
-                          'تعديل',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context)!.update,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -468,7 +479,6 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                         ),
                       ),
                     ),
-
                   ],
                 ),
                 ElevatedButton(
@@ -481,9 +491,9 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                     backgroundColor: Colors.orange,
                     minimumSize: const Size(double.infinity, 40),
                   ),
-                  child: const Text(
-                    'رجوع',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context)!.arrow,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -505,7 +515,8 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
       return; // If a file picker is already open, return immediately
 
     setState(() {
-      _isFilePickerOpen = true; // Set the flag to indicate a file picker is open
+      _isFilePickerOpen =
+          true; // Set the flag to indicate a file picker is open
     });
 
     FilePickerResult? result =
@@ -563,5 +574,4 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
       print("Error stopping recording: $e");
     }
   }
-
 }

@@ -1,0 +1,23 @@
+{
+    "home" : "Home",
+    "language" : "Language",
+    "search" : "Search",
+    "share_app" : "Share App",
+    "who" : "Who we",
+    "connect" : "Connect Us",
+    "rate" : "Rate App",
+    "count" : "Count Repeed",
+    "speed" : "Speed Sound",
+    "taspeh_manoal" : "Manual tasbeeh",
+    "taspeh_auto" : "Auto tasbeeh",
+    "add" : "Add",
+    "delete" : "Delete",
+    "arrow" : "Back",
+    "update" : "Update",
+    "yes" : "Yes",
+    "no" : "No",
+    "title" : "Do you want to change the language?",
+    "countMsg" : "language of the application will be changed",
+    "title_textfiled" : "Audio title",
+    "file_textfiled" : "Audio file"
+}

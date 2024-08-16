@@ -2,8 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../provider/language_provider.dart';
 
 final InAppReview inAppReview = InAppReview.instance;
 
@@ -26,8 +30,8 @@ Widget myDrawer(BuildContext context) {
           onTap: () {
             Navigator.pushReplacementNamed(context, '/home_screen');
           },
-          title: const Text(
-            'الرئيسية',
+          title: Text(
+            AppLocalizations.of(context)!.home,
             textAlign: TextAlign.right,
           ),
           leading: const Icon(
@@ -36,11 +40,24 @@ Widget myDrawer(BuildContext context) {
           ),
         ),
         ListTile(
+          onTap: () {
+            _languageDialog(context);
+          },
+          title: Text(
+            AppLocalizations.of(context)!.language,
+            textAlign: TextAlign.right,
+          ),
+          leading: const Icon(
+            Icons.g_translate,
+            color: Color(0xff3949AB),
+          ),
+        ),
+        ListTile(
           onTap: () async {
             _shareApp(context);
           },
-          title: const Text(
-            'مشاركة التطبيق',
+          title: Text(
+            AppLocalizations.of(context)!.share_app,
             textAlign: TextAlign.right,
           ),
           leading: const Icon(
@@ -52,8 +69,8 @@ Widget myDrawer(BuildContext context) {
           onTap: () {
             Navigator.pushNamed(context, '/who_screen');
           },
-          title: const Text(
-            'من نحن',
+          title: Text(
+            AppLocalizations.of(context)!.who,
             textAlign: TextAlign.right,
           ),
           leading: const Icon(
@@ -66,8 +83,8 @@ Widget myDrawer(BuildContext context) {
             openGmail();
             print('OPEN GMAIL!');
           },
-          title: const Text(
-            'تواصل معنا',
+          title: Text(
+            AppLocalizations.of(context)!.connect,
             textAlign: TextAlign.right,
           ),
           leading: const Icon(
@@ -84,8 +101,8 @@ Widget myDrawer(BuildContext context) {
                       'https://apps.apple.com/app/app-name/id1111111111');
             }
           },
-          title: const Text(
-            'قيمنا',
+          title: Text(
+            AppLocalizations.of(context)!.rate,
             textAlign: TextAlign.right,
           ),
           leading: const Icon(
@@ -125,4 +142,67 @@ void openGmail() async {
   } catch (e) {
     print('Error: $e');
   }
+}
+
+Future<void> _languageDialog(BuildContext context) async {
+  return showDialog(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(AppLocalizations.of(context)!.title),
+        content: SingleChildScrollView(
+            child: Column(
+          children: [
+            TextButton(
+                onPressed: () {
+                  Provider.of<LanguageProvider>(context, listen: false)
+                      .changeLanguage("ar");
+                  Navigator.pop(context);
+                },
+                child: Text("Arabic")),
+            TextButton(
+                onPressed: () {
+                  Provider.of<LanguageProvider>(context, listen: false)
+                      .changeLanguage("fr");
+                  Navigator.pop(context);
+                },
+                child: Text("Franch")),
+            TextButton(
+                onPressed: () {
+                  Provider.of<LanguageProvider>(context, listen: false)
+                      .changeLanguage("en");
+                  Navigator.pop(context);
+                },
+                child: Text("English")),
+          ],
+        )
+            // ListBody(
+            //   children: <Widget>[
+            //     Text(
+            //       AppLocalizations.of(context)!.countMsg,
+            //       style: const TextStyle(fontSize: 20),
+            //     ),
+            //   ],
+            // ),
+            ),
+        // actions: <Widget>[
+        //   TextButton(
+        //     child: Text(AppLocalizations.of(context)!.yes),
+        //     onPressed: () {
+        //       Provider.of<LanguageProvider>(context, listen: false)
+        //           .changeLanguage();
+        //       Navigator.pop(context);
+        //     },
+        //   ),
+        //   TextButton(
+        //     child: Text(AppLocalizations.of(context)!.no),
+        //     onPressed: () {
+        //       Navigator.pop(context);
+        //     },
+        //   ),
+        // ],
+      );
+    },
+  );
 }

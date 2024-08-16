@@ -1,0 +1,23 @@
+{
+  "home" : "Maison",
+  "language" : "Langues",
+  "search" : "Recherche",
+  "share_app" : "Partager l'application",
+  "who" : "Qui sommes-nous",
+  "connect" : "Contactez-nous",
+  "rate" : "Évaluez l'application",
+  "count" : "Nombre de",
+  "speed" : "Vitesse du son",
+  "taspeh_manoal" : "Tasbeeh manuel",
+  "taspeh_auto" : "Tasbeeh automatique",
+  "add" : "ajout",
+  "delete" : "supprimer",
+  "arrow" : "Dos",
+  "update" : "amendement",
+  "yes" : "Oui",
+  "no" : "Non",
+  "title" : "Voulez-vous changer la langue?",
+  "countMsg" : "La langue de l'application sera modifiée",
+  "title_textfiled" : "Titre audio",
+  "file_textfiled" : "Fichier audio"
+}
