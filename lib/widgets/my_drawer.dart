@@ -117,8 +117,7 @@ Widget myDrawer(BuildContext context) {
 
 void _shareApp(BuildContext context) {
   final RenderBox box = context.findRenderObject() as RenderBox;
-  const String subject =
-      'تطبيق لتكرار الصوت يساعد على ذكر الله كثيرا والحفظ والمذاكرة والتذكير بسهولة فى اى روتين لحياتك مع استخدامات كثيرة اخرى';
+  String subject = AppLocalizations.of(context)!.subject_share;
   String url = Platform.isAndroid
       ? 'https://play.google.com/store/apps/details?id=your.app.package'
       : 'https://apps.apple.com/app/app-name/id1111111111';
@@ -152,56 +151,43 @@ Future<void> _languageDialog(BuildContext context) async {
       return AlertDialog(
         title: Text(AppLocalizations.of(context)!.title),
         content: SingleChildScrollView(
-            child: Column(
-          children: [
-            TextButton(
-                onPressed: () {
-                  Provider.of<LanguageProvider>(context, listen: false)
-                      .changeLanguage("ar");
-                  Navigator.pop(context);
-                },
-                child: Text("Arabic")),
-            TextButton(
-                onPressed: () {
-                  Provider.of<LanguageProvider>(context, listen: false)
-                      .changeLanguage("fr");
-                  Navigator.pop(context);
-                },
-                child: Text("Franch")),
-            TextButton(
-                onPressed: () {
-                  Provider.of<LanguageProvider>(context, listen: false)
-                      .changeLanguage("en");
-                  Navigator.pop(context);
-                },
-                child: Text("English")),
-          ],
-        )
-            // ListBody(
-            //   children: <Widget>[
-            //     Text(
-            //       AppLocalizations.of(context)!.countMsg,
-            //       style: const TextStyle(fontSize: 20),
-            //     ),
-            //   ],
-            // ),
+          child: Column(
+            children: [
+              TextButton(
+                  onPressed: () {
+                    Provider.of<LanguageProvider>(context, listen: false)
+                        .changeLanguage("ar");
+                    Navigator.pop(context);
+                  },
+                  child: Text(AppLocalizations.of(context)!.arabic)),
+              TextButton(
+                  onPressed: () {
+                    Provider.of<LanguageProvider>(context, listen: false)
+                        .changeLanguage("en");
+                    Navigator.pop(context);
+                  },
+                  child: Text(AppLocalizations.of(context)!.english)),
+              TextButton(
+                  onPressed: () {
+                    Provider.of<LanguageProvider>(context, listen: false)
+                        .changeLanguage("fr");
+                    Navigator.pop(context);
+                  },
+                  child: Text(AppLocalizations.of(context)!.french)),
+            ],
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.close,
+              color: Colors.red,
             ),
-        // actions: <Widget>[
-        //   TextButton(
-        //     child: Text(AppLocalizations.of(context)!.yes),
-        //     onPressed: () {
-        //       Provider.of<LanguageProvider>(context, listen: false)
-        //           .changeLanguage();
-        //       Navigator.pop(context);
-        //     },
-        //   ),
-        //   TextButton(
-        //     child: Text(AppLocalizations.of(context)!.no),
-        //     onPressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //   ),
-        // ],
+          ),
+        ],
       );
     },
   );
