@@ -126,7 +126,6 @@ class _DetailsAthkarScreenState extends State<DetailsAthkarScreen>
                         ),
                       ),
                     ),
-
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -214,7 +213,10 @@ class _DetailsAthkarScreenState extends State<DetailsAthkarScreen>
 
     if (_countNumberController.text.isEmpty) {
       showSnackBar(
-          context: context, error: true, message: 'قم بإدخال عدد مرات التكرار');
+        context: context,
+        error: true,
+        message: AppLocalizations.of(context)!.message2,
+      );
     } else {
       setState(() {
         _isButtonDisabled = true; // تعطيل الزر
@@ -317,7 +319,7 @@ class _DetailsAthkarScreenState extends State<DetailsAthkarScreen>
           showSnackBar(
             context: context,
             error: true,
-            message: 'قم بإدخال عدد مرات التكرار',
+            message: AppLocalizations.of(context)!.message2,
           );
           setState(() {
             _isButtonDisabled = false; // إعادة تمكين الزر حتى في حالة الخطأ
