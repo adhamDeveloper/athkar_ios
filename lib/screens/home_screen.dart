@@ -291,8 +291,8 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                             showSnackBar(
                                 context: context,
                                 error: true,
-                                message:
-                                'تأكد من إضافة عنوان الصوت أوالملف الصوتي واختيار وقت التنبيه');
+                                message:AppLocalizations.of(context)!.message
+                                );
                             return;
                           }
                         },

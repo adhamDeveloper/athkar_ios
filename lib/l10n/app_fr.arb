@@ -19,5 +19,11 @@
   "title" : "Voulez-vous changer la langue?",
   "countMsg" : "La langue de l'application sera modifiée",
   "title_textfiled" : "Titre audio",
-  "file_textfiled" : "Fichier audio"
+  "file_textfiled" : "Fichier audio",
+  "arabic": "Arabic",
+  "english": "English",
+  "french": "French",
+  "message": "Assurez-vous d'ajouter le titre de l'audio ou du fichier audio",
+  "subject_share": "Une application de répétition audio qui vous aide à vous souvenir souvent de Dieu, à mémoriser, à étudier et à vous souvenir facilement dans n'importe quelle routine de votre vie, avec de nombreuses autres utilisations."
+
 }

@@ -26,7 +26,7 @@ class SharedPrefController {
 
 
   String get language =>
-      _sharedPreferences.getString(PrefKeys.language.toString()) ?? 'en';
+      _sharedPreferences.getString(PrefKeys.language.toString()) ?? 'ar';
 
 
 }
