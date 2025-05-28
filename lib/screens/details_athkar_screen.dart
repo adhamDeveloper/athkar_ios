@@ -251,6 +251,7 @@ class _DetailsAthkarScreenState extends State<DetailsAthkarScreen>
               await _audioCompletion!.future;
             } catch (e) {
               print('Error playing audio: $e');
+              showSnackBar(context: context, message: 'هناك خطا في الصوت',error: true);
             }
           } else if (_counter <= 0) {
             setState(() {

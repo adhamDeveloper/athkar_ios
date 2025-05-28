@@ -133,7 +133,7 @@ void openGmail() async {
   final Uri emailLaunchUri = Uri(
     scheme: 'mailto',
     path: 'adhammheeb99@gmail.com',
-    query: Uri.encodeFull('subject=Hello&body=How are you?'),
+    query: Uri.encodeFull('subject=السلام عليكم&body=كيف حالك يا بشمهندس'),
   );
 
   try {
@@ -149,9 +149,10 @@ Future<void> _languageDialog(BuildContext context) async {
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text(AppLocalizations.of(context)!.title),
+        title: Text(AppLocalizations.of(context)!.title,textAlign: TextAlign.center,),
         content: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextButton(
                   onPressed: () {
@@ -159,21 +160,33 @@ Future<void> _languageDialog(BuildContext context) async {
                         .changeLanguage("ar");
                     Navigator.pop(context);
                   },
-                  child: Text(AppLocalizations.of(context)!.arabic)),
+                  child: Text(
+                    AppLocalizations.of(context)!.arabic,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),
+                  )),
               TextButton(
                   onPressed: () {
                     Provider.of<LanguageProvider>(context, listen: false)
                         .changeLanguage("en");
                     Navigator.pop(context);
                   },
-                  child: Text(AppLocalizations.of(context)!.english)),
+                  child: Text(
+                    AppLocalizations.of(context)!.english,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),
+                  )),
               TextButton(
                   onPressed: () {
                     Provider.of<LanguageProvider>(context, listen: false)
                         .changeLanguage("fr");
                     Navigator.pop(context);
                   },
-                  child: Text(AppLocalizations.of(context)!.french)),
+                  child: Text(
+                    AppLocalizations.of(context)!.french,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),
+                  )),
             ],
           ),
         ),

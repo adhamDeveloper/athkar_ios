@@ -1,19 +1,25 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataList {
-   String? name;
-   String? audioUrl;
+  String? name;
+  String? audioUrl;
+  TimeOfDay? alarmTime; // إضافة حقل alarmTime
 
   DataList({
     required this.name,
     required this.audioUrl,
+    this.alarmTime, // تعيين alarmTime كخيار اختياري
   });
 
   Map<String, dynamic> toJson() {
     return {
       'name': name,
       'audioUrl': audioUrl,
+      'alarmTime': alarmTime != null
+          ? '${alarmTime!.hour}:${alarmTime!.minute}'
+          : null, // تحويل وقت المنبه إلى نص
     };
   }
 
@@ -21,6 +27,12 @@ class DataList {
     return DataList(
       name: json['name'],
       audioUrl: json['audioUrl'],
+      alarmTime: json['alarmTime'] != null
+          ? TimeOfDay(
+        hour: int.parse(json['alarmTime'].split(':')[0]),
+        minute: int.parse(json['alarmTime'].split(':')[1]),
+      )
+          : null, // استعادة وقت المنبه من النص
     );
   }
 
@@ -170,42 +182,42 @@ class DataList {
     ),
   ];
 
-   static Future<List<DataList>> loadItems() async {
-     SharedPreferences prefs = await SharedPreferences.getInstance();
-     String? jsonString = prefs.getString('dataList');
-     if (jsonString != null) {
-       List<dynamic> jsonList = jsonDecode(jsonString);
-       return jsonList.map((json) => DataList.fromJson(json)).toList();
-     } else {
-       return [];
-     }
-   }
+  static Future<List<DataList>> loadItems() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? jsonString = prefs.getString('dataList');
+    if (jsonString != null) {
+      List<dynamic> jsonList = jsonDecode(jsonString);
+      return jsonList.map((json) => DataList.fromJson(json)).toList();
+    } else {
+      return [];
+    }
+  }
 
-   static Future<void> saveItems(List<DataList> list) async {
-     SharedPreferences prefs = await SharedPreferences.getInstance();
-     String jsonString = jsonEncode(list.map((item) => item.toJson()).toList());
-     await prefs.setString('dataList', jsonString);
-   }
+  static Future<void> saveItems(List<DataList> list) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String jsonString = jsonEncode(list.map((item) => item.toJson()).toList());
+    await prefs.setString('dataList', jsonString);
+  }
 
-   static Future<void> addItem(DataList item) async {
-     List<DataList> currentItems = await loadItems();
-     currentItems.add(item);
-     await saveItems(currentItems);
-   }
+  static Future<void> addItem(DataList item) async {
+    List<DataList> currentItems = await loadItems();
+    currentItems.add(item);
+    await saveItems(currentItems);
+  }
 
-   static Future<void> updateItem(int index, DataList newItem) async {
-     List<DataList> currentItems = await loadItems();
-     if (index >= 0 && index < currentItems.length) {
-       currentItems[index] = newItem;
-       await saveItems(currentItems);
-     }
-   }
+  static Future<void> updateItem(int index, DataList newItem) async {
+    List<DataList> currentItems = await loadItems();
+    if (index >= 0 && index < currentItems.length) {
+      currentItems[index] = newItem;
+      await saveItems(currentItems);
+    }
+  }
 
-   static Future<void> deleteItem(int index) async {
-     List<DataList> currentItems = await loadItems();
-     if (index >= 0 && index < currentItems.length) {
-       currentItems.removeAt(index);
-       await saveItems(currentItems);
-     }
-   }
+  static Future<void> deleteItem(int index) async {
+    List<DataList> currentItems = await loadItems();
+    if (index >= 0 && index < currentItems.length) {
+      currentItems.removeAt(index);
+      await saveItems(currentItems);
+    }
+  }
 }

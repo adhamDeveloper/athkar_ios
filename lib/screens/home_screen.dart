@@ -3,12 +3,20 @@ import 'package:athkar_tasbeh_sound/widgets/data_list.dart';
 import 'package:athkar_tasbeh_sound/widgets/snackbar.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:record/record.dart';
+// import 'package:record/record.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/my_drawer.dart';
 import '../widgets/my_textfields.dart';
 import 'details_athkar_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -23,8 +31,12 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
   List<DataList> list = [];
   List<DataList> filteredList = [];
 
-  final _record = AudioRecorder();
+
+  final FlutterSoundRecorder? _recorder = FlutterSoundRecorder();
   bool _isRecording = false;
+  // TextEditingController _fileAthkarController = TextEditingController();
+
+  // bool _isRecording = false;
 
   File? _selectedFile;
   bool _isFilePickerOpen = false;
@@ -37,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
     _titleAthkarController = TextEditingController();
     super.initState();
     _loadItems();
+    _loadSavedRecordingPath(); // استدعاء الدالة لاسترجاع المسار المحفوظ
   }
 
   @override
@@ -287,12 +300,14 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                             _titleAthkarController.clear();
                             _fileAthkarController.clear();
                             Navigator.pop(context);
+                            showSnackBar(
+                                context: context,
+                                message: AppLocalizations.of(context)!.message3);
                           } else {
                             showSnackBar(
                                 context: context,
                                 error: true,
-                                message:AppLocalizations.of(context)!.message
-                                );
+                                message: AppLocalizations.of(context)!.message);
                             return;
                           }
                         },
@@ -330,7 +345,6 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
                         ),
                       ),
                     ),
-
                   ],
                 ),
               ],
@@ -536,17 +550,17 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
   }
 
   Future<void> _startRecording() async {
-    if (await _record.hasPermission()) {
+    // تحقق من إذن الميكروفون
+    var status = await Permission.microphone.request();
+    if (status.isGranted) {
       try {
         final directory = await getApplicationDocumentsDirectory();
-        final path = '${directory.path}/audio_recording.m4a';
-        await _record.start(
-          const RecordConfig(
-            encoder: AudioEncoder.flac,
-            bitRate: 128000,
-            sampleRate: 44100,
-          ),
-          path: path,
+        final path = '${directory.path}/audio.m4a';
+        await _recorder!.startRecorder(
+          toFile: path,
+          codec: Codec.aacMP4,
+          bitRate: 128000,
+          sampleRate: 44100,
         );
         setState(() {
           _isRecording = true;
@@ -562,16 +576,46 @@ class _HomeScreenState extends State<HomeScreen> with Helpers {
 
   Future<void> _stopRecording() async {
     try {
-      String? path = await _record.stop();
+      String? path = await _recorder!.stopRecorder();
       if (path != null) {
         setState(() {
           _isRecording = false;
           _fileAthkarController.text = path;
         });
+        await _saveRecordingPath(path); // حفظ مسار التسجيل في SharedPreferences
         print("Recording saved at: $path");
       }
     } catch (e) {
       print("Error stopping recording: $e");
+    }
+  }
+
+  Future<void> _loadSavedRecordingPath() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedPath = prefs.getString('recording_path');
+    if (savedPath != null) {
+      File audioFile = File(savedPath);
+      if (!audioFile.existsSync()) {
+        print("Audio file does not exist at the path: $savedPath");
+        return;
+      } else {
+        setState(() {
+          _fileAthkarController.text = savedPath;
+        });
+        print("Loaded saved recording path: $savedPath");
+      }
+    } else {
+      print("No saved recording path found.");
+    }
+  }
+
+  Future<void> _saveRecordingPath(String path) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool success = await prefs.setString('recording_path', path);
+    if (success) {
+      print("Recording path saved: $path");
+    } else {
+      print("Failed to save recording path.");
     }
   }
 }
